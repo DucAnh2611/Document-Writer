@@ -3,13 +3,13 @@ const config = require("../../config");
 
 const verifyToken = (req, res, next) => {
 
-  const token =
+  try {
+    const token =
     req.body.token || req.query.token || req.headers["x-access-token"] || JSON.parse(req.cookies[config.cookie]).token;
 
-  if (!token) {
-    return res.status(403).send("A token is required for authentication");
-  }
-  try {
+    if (!token) {
+      return res.status(403).send("A token is required for authentication");
+    }
     const decoded = jwt.verify(token, config.TOKEN_KEY);
 
     if(parseInt(new Date().getTime()/1000 - decoded.exp) > 0 ) {
