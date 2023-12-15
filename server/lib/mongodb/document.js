@@ -1,5 +1,6 @@
 const { connect, status, createResData } = require("./index");
 const config = require('../../config');
+var ObjectId = require('mongodb').ObjectId; 
 
 const create = async (userid) => {
     try {
@@ -9,12 +10,15 @@ const create = async (userid) => {
     
         let docId = await dbo.collection(config.collection.document).insertOne({
             owner: userid,
+            publish: false,
+            create_at: new Date().toUTCString(),
+            modify_at: new Date().toUTCString(),
             title: "New Document",
             data: []
         });
         
         await client.close();
-        return createResData(status.OK, {id: docId});
+        return createResData(status.OK, {id: docId.insertedId});
     } 
     catch(err) {
         return createResData(status.NOT_VALID);
@@ -22,14 +26,14 @@ const create = async (userid) => {
 
 }
 
-const get = async (userid, key = 0, page = 1, limit = config.db_option.limit) => {
+const get = async (userid, key = "", page = 1, limit = config.db_option.limit) => {
     try {
         let client = await connect();
         let dbo = client.db();
 
-        let all = await dbo.collection('test').find(
+        let all = await dbo.collection(config.collection.document).find(
             {
-                title: key,
+                title: new RegExp(key),
                 owner: userid
             },
             {
@@ -51,24 +55,68 @@ const get = async (userid, key = 0, page = 1, limit = config.db_option.limit) =>
     }
 }
 
+const info = async (userid, docid) => {
+    try {
+        let client = await connect();
+
+        let dbo = client.db();
+        
+        let document = await dbo.collection(config.collection.document).find({
+            _id: new ObjectId(docid)
+        }).toArray();
+        await client.close();
+
+        if(document.length !==0 ) {
+            let currentDoc = document[0];
+            if(currentDoc.publish || currentDoc.owner === userid) {
+                return createResData(status.OK, {info: currentDoc});
+            }
+            else {
+                return createResData(status.NO_PERMISSION);
+            }
+        }
+        else {
+            return createResData(status.NOT_FOUND);
+        }
+    }
+    catch(err) {
+        console.log(err);
+        return  createResData(status.NOT_VALID);
+    }
+}
+
 const update = async (userid, data) => {
     try {
         let client = await connect();
 
         let dbo = client.db();
 
-
-        await dbo.collection(config.collection.document).findOneAndReplace(
+        let doc = await dbo.collection(config.collection.document).find(
             {
-                _id: data._id,
+                _id: new ObjectId(data._id),
                 owner: userid
-            }, 
-            {
-                sort: {
-                    last_modify: -1
-                }
             }
-        );
+        ).toArray();
+
+        if(doc.length === 0) {
+            await client.close();
+            return createResData(status.NOT_FOUND);
+        }
+        else {
+            doc = doc[0];
+
+            await dbo.collection(config.collection.document).replaceOne({
+                _id: new ObjectId(data._id),
+                owner: userid
+            }, {
+                ...doc,
+                title: data.title,
+                data: data.data,
+                publish: data.publish,
+                modify_at: new Date().toUTCString()
+            });
+            return createResData(status.OK);
+        }
     } 
     catch(err) {
         return createResData(status.NOT_VALID);
@@ -76,5 +124,5 @@ const update = async (userid, data) => {
 }
 
 module.exports = {
-    get, create
+    get, create, info, update
 }

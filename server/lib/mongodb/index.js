@@ -19,6 +19,8 @@ const connect = async () => {
 const status = {
     NOT_VALID: -1,
     NOT_FOUND: -2,
+    NO_PERMISSION: -3,
+    SAME: -4,
     INIT: 0,
     OK: 1
 }
