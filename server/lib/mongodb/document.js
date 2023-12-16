@@ -36,7 +36,13 @@ const get = async (userid, key = "", page = 1, limit = config.db_option.limit) =
                 title: new RegExp(key),
                 owner: userid
             },
-            {
+            {   
+                title: 1, 
+                owner: 1,
+                publish: 1,
+                create_at: 1,
+                modify_at: 1,
+                _id: 0,
                 sort: {
                     last_modify: -1
                 }
