@@ -7,18 +7,21 @@ const create = async (userid) => {
         let client = await connect();
         
         let dbo = client.db();
-    
-        let docId = await dbo.collection(config.collection.document).insertOne({
+        let newDoc = {
             owner: userid,
             publish: false,
             create_at: new Date().toUTCString(),
             modify_at: new Date().toUTCString(),
             title: "New Document",
             data: []
-        });
+        }
+        let docId = await dbo.collection(config.collection.document).insertOne(newDoc);
         
         await client.close();
-        return createResData(status.OK, {id: docId.insertedId});
+        return createResData(status.OK, {doc: {
+            _id: docId.insertedId,
+            ...newDoc
+        }});
     } 
     catch(err) {
         return createResData(status.NOT_VALID);
