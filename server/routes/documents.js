@@ -21,7 +21,7 @@ router.put('/update', auth, function(req, res, next) {
   update(id, doc).then(data=> {
 
     if(data.status.NOT_FOUND) res.status(401).json({status: "fail", message: "zero"});
-    else res.json({status: "ok"});
+    else res.json({status: "ok", data: data.data.doc});
     
   }); 
 });

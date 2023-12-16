@@ -109,19 +109,20 @@ const update = async (userid, data) => {
             return createResData(status.NOT_FOUND);
         }
         else {
-            doc = doc[0];
 
-            await dbo.collection(config.collection.document).replaceOne({
-                _id: new ObjectId(data._id),
-                owner: userid
-            }, {
-                ...doc,
+            let newDoc = {
+                ...doc[0],
                 title: data.title,
                 data: data.data,
                 publish: data.publish,
                 modify_at: new Date().toUTCString()
-            });
-            return createResData(status.OK);
+            }
+
+            await dbo.collection(config.collection.document).replaceOne({
+                _id: new ObjectId(data._id),
+                owner: userid
+            }, newDoc);
+            return createResData(status.OK, {doc: newDoc});
         }
     } 
     catch(err) {
