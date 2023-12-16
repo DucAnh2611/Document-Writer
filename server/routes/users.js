@@ -8,14 +8,9 @@ var router = express.Router();
 /* GET users listing. */
 router.post('/signup', async (req, res, next) => {
   regis(req.body).then(data => {
-
     if(data.status === status.SAME) res.status(401).json({status: "fail", message: "Same username"});
-    
-    res.cookie(config.cookie,JSON.stringify({
-      token: data.data.token
-    }));
-    res.json({status: "ok", token: data.data.token});
 
+    res.json({status: "ok"});
   });
 });
 
@@ -35,7 +30,7 @@ router.post('/login', async (req, res, next) => {
         res.cookie(config.cookie, JSON.stringify({
           token: data.data.token
         }));
-        res.json({status: "ok", token: data.data.token});
+        res.json({status: "ok", token: data.data.info});
 
         break;
     }

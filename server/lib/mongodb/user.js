@@ -20,14 +20,8 @@ const regis = async (request) => {
             avatar: avatar
         });
 
-        token = newToken({
-            id: userid.insertedId,
-            username: username,
-            avatar: avatar
-        }, "72h");
-
         await client.close();
-        return createResData(status.OK, {token: token});
+        return createResData(status.OK);
     }
     catch (err) {
         return createResData(status.NOT_VALID);
@@ -56,7 +50,14 @@ const login = async(request) => {
                     avatar: user.avatar
                 }, "72h");
                 
-                return createResData(status.OK, {token: token});
+                return createResData(status.OK, {
+                    token: token,
+                    info: {
+                        id: user._id,
+                        username: username,
+                        avatar: user.avatar,                        
+                    }
+                });
             }
             else {
                 return createResData(status.NO_PERMISSION);
