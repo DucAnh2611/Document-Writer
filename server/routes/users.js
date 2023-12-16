@@ -22,6 +22,9 @@ router.post('/signup', async (req, res, next) => {
 router.post('/login', async (req, res, next) => {
   login(req.body).then(data => {
     switch(data.status) {
+      case status.NOT_FOUND:
+        res.status(401).json({status: "fail", message: "user"});
+        break;
       case status.NO_PERMISSION:
         res.status(401).json({status: "fail", message: "password"});
         break;

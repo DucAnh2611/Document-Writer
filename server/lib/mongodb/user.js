@@ -48,17 +48,22 @@ const login = async(request) => {
 
         await client.close();
         
-        if(user.password === password) {
-            token = newToken({
-                id: user._id,
-                username: username,
-                avatar: user.avatar
-            }, "72h");
-            
-            return createResData(status.OK, {token: token})
+        if(user !== null) {
+            if(user.password === password) {
+                token = newToken({
+                    id: user._id,
+                    username: username,
+                    avatar: user.avatar
+                }, "72h");
+                
+                return createResData(status.OK, {token: token});
+            }
+            else {
+                return createResData(status.NO_PERMISSION);
+            }
         }
         else {
-            return createResData(status.NO_PERMISSION);
+            return createResData(status.NOT_FOUND);
         }
         
     }
