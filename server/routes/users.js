@@ -27,9 +27,6 @@ router.post('/login', async (req, res, next) => {
         res.status(401).json({status: "fail", message: "sql"});
         break;
       case status.OK:
-        res.cookie(config.cookie, JSON.stringify({
-          token: data.data.token
-        }));
         res.json({status: "ok", data: {...data.data.info, token: data.data.token}});
 
         break;

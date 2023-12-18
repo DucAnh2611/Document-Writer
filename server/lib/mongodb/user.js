@@ -30,45 +30,41 @@ const regis = async (request) => {
 
 }
 
-const login = async(request) => {
+const login = async (request) => {
     try {
         let client = await connect();
-        let {username, password} = request;
+        let {email, avatar} = request;
         let dbo = client.db();
 
-        let user = await dbo.collection("users").findOne({
-            username: username
-        });
+        let user = await dbo.collection("users").find({
+            email: email
+        }).toArray();
 
-        await client.close();
-        
-        if(user !== null) {
-            if(user.password === password) {
-                token = newToken({
-                    id: user._id,
-                    username: username,
-                    avatar: user.avatar
-                }, "72h");
-                
-                return createResData(status.OK, {
-                    token: token,
-                    info: {
-                        id: user._id,
-                        username: username,
-                        avatar: user.avatar,                        
-                    }
-                });
-            }
-            else {
-                return createResData(status.NO_PERMISSION);
-            }
+        if(user.length !== 0) {
+            user = user[0];
         }
         else {
-            return createResData(status.NOT_FOUND);
+            let userid = await dbo.collection("users").insertOne({
+                email: email
+            });
+
+            user = {
+                id: userid.insertedId,
+                email: email
+            }
         }
+
+        token = newToken(user, "72");
+
+        await client.close();
+        return createResData(status.OK, {
+            token: token,
+            info: user
+        });
         
     }
     catch (err) {
+        console.log(err);
         return createResData(status.NOT_VALID);
     }
 }
