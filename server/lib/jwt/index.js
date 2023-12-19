@@ -5,8 +5,7 @@ const verifyToken = (req, res, next) => {
 
   try {
     const token =
-    req.body.token || req.query.token || req.headers["x-access-token"] || JSON.parse(req.cookies[config.cookie]).token;
-
+    req.body.token || req.query.token || req.headers["x-access-token"] || req.cookies.token;
     if (!token) {
       return res.status(403).json({status: "fail", message: "A token is required for authentication"});
     }
@@ -22,6 +21,7 @@ const verifyToken = (req, res, next) => {
     }
 
   } catch (err) {
+    console.log(err);
     return res.status(401).json({status: "fail", message: "Invalid Token"});
   }
   return next();
