@@ -17,7 +17,7 @@ const create = async (userid) => {
         }
         let docId = await dbo.collection(config.collection.document).insertOne(newDoc);
         
-        await client.close();
+        // await client.close();
         return createResData(status.OK, {doc: {
             _id: docId.insertedId,
             ...newDoc
@@ -41,13 +41,12 @@ const get = async (userid, key = "", page = 1, limit = config.db_option.limit) =
             },
             {   
                 title: 1, 
-                owner: 1,
                 publish: 1,
                 create_at: 1,
                 modify_at: 1,
-                _id: 0,
+                _id: 1,
                 sort: {
-                    last_modify: -1
+                    modify_at: -1
                 }
             }
         )
@@ -55,7 +54,7 @@ const get = async (userid, key = "", page = 1, limit = config.db_option.limit) =
         .skip((page - 1) * limit)
         .toArray();
 
-        await client.close();
+        // await client.close();
         return createResData(status.OK, {list: all});
     } 
     catch(err) {
@@ -67,22 +66,18 @@ const get = async (userid, key = "", page = 1, limit = config.db_option.limit) =
 const info = async (userid, docid) => {
     try {
         let client = await connect();
-
-        let dbo = client.db();
         
-        let document = await dbo.collection(config.collection.document).find({
-            _id: new ObjectId(docid)
+        let dbo = client.db().collection(config.collection.document);
+        
+        let document = await dbo.find({
+            _id: new ObjectId(docid),
+            owner: userid
         }).toArray();
-        await client.close();
+
+        // await client.close();
 
         if(document.length !==0 ) {
-            let currentDoc = document[0];
-            if(currentDoc.publish || currentDoc.owner === userid) {
-                return createResData(status.OK, {info: currentDoc});
-            }
-            else {
-                return createResData(status.NO_PERMISSION);
-            }
+            return createResData(status.OK, {info: document[0]});
         }
         else {
             return createResData(status.NOT_FOUND);
@@ -90,14 +85,13 @@ const info = async (userid, docid) => {
     }
     catch(err) {
         console.log(err);
-        return  createResData(status.NOT_VALID);
+        return createResData(status.NOT_VALID);
     }
 }
 
 const update = async (userid, data) => {
     try {
         let client = await connect();
-
         let dbo = client.db();
 
         let doc = await dbo.collection(config.collection.document).find(
@@ -133,6 +127,37 @@ const update = async (userid, data) => {
     }
 }
 
+const remove = async (userid, docid) => {
+    try {
+        let client = await connect();
+
+        let dbo = client.db();
+        
+        let document = await dbo.collection(config.collection.document).find({
+            _id: new ObjectId(docid),
+            owner: userid
+        }).toArray();
+
+        if(document.length !==0 ) {
+            let deleteDoc = await dbo.collection(config.collection.document).deleteOne({
+                _id: new ObjectId(docid),
+                owner: userid
+            });
+
+            return createResData(status.OK);
+            
+        }
+        else {
+            // await client.close();
+            return createResData(status.NOT_FOUND);
+        }
+    }
+    catch(err) {
+        console.log(err);
+        return  createResData(status.NOT_VALID);
+    }
+}
+
 module.exports = {
-    get, create, info, update
+    get, create, info, update, remove
 }

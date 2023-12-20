@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 module.exports = {
     db_uri: "mongodb+srv://be-documen-main-db-04eef909a4b:Y9UHnrrcKSddNFm8wGaXu5mXsmgSJp@prod-us-central1-3.yr9so.mongodb.net/be-documen-main-db-04eef909a4b",
     TOKEN_KEY: "iwDAqfag26WXbtkUaNY3mp+wbGsiO8tVJw4G3/NAM7VcOMMoD590BiaBmFUaXqsup80=",
@@ -16,6 +18,6 @@ module.exports = {
     redirectUrl: process.env.REDIRECT_URL,
     clientUrl: process.env.CLIENT_URL,
     tokenSecret: process.env.TOKEN_SECRET,
-    tokenExpiration: 36000,
+    tokenExpiration: 900000,
     postUrl: 'https://jsonplaceholder.typicode.com/posts'
 }

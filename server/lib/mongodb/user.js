@@ -1,6 +1,4 @@
 const { connect, createResData, status } = require("./index");
-const config = require("../../config");
-const { newToken } = require("../jwt");
 
 const regis = async (request) => {
     try {
@@ -33,7 +31,7 @@ const regis = async (request) => {
 const login = async (request) => {
     try {
         let client = await connect();
-        let {email, avatar} = request;
+        let {email} = request;
         let dbo = client.db();
 
         let user = await dbo.collection("users").find({
@@ -41,26 +39,24 @@ const login = async (request) => {
         }).toArray();
 
         if(user.length !== 0) {
-            user = user[0];
+            user = {
+                ...user[0],
+                _id: user[0]._id.toString()
+            };
         }
         else {
             let userid = await dbo.collection("users").insertOne({
-                email: email
+                email
             });
 
             user = {
-                id: userid.insertedId,
+                _id: userid.insertedId,
                 email: email
             }
         }
 
-        token = newToken(user, "72");
-
         await client.close();
-        return createResData(status.OK, {
-            token: token,
-            info: user
-        });
+        return createResData(status.OK, user);
         
     }
     catch (err) {

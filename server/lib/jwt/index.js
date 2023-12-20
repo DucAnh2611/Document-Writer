@@ -1,15 +1,17 @@
 const jwt = require("jsonwebtoken");
 const config = require("../../config");
+require("dotenv").config();
 
 const verifyToken = (req, res, next) => {
 
   try {
     const token =
-    req.body.token || req.query.token || req.headers["x-access-token"] || req.cookies.token;
+    req.body.token || req.query.token || req.headers["x-access-token"] || req.cookies[process.env.COOKIES_NAME];
     if (!token) {
       return res.status(403).json({status: "fail", message: "A token is required for authentication"});
     }
     const decoded = jwt.verify(token, config.TOKEN_KEY);
+    res.cookies.set(token, {masAge: config.tokenExpiration});
 
     if(parseInt(new Date().getTime()/1000 - decoded.exp) > 0 ) {
       return res.status(403).json({status: "fail", message: "Expired Token"});

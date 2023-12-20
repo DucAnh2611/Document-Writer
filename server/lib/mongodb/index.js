@@ -7,7 +7,6 @@ const connect = async () => {
     
     try {
         await client.connect();
-
         return client;
     } 
     catch (e) {
