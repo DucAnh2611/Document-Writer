@@ -1,6 +1,7 @@
 import { faAlignCenter, faAlignJustify, faAlignLeft, faAlignRight, faBold, faItalic, faListUl, faUnderline } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import useStyleForm from "../../../Hooks/useStyleForm";
+import { MainSelecStyle } from "./styled";
 
 export default function FormSelectStyle() {
 
@@ -10,7 +11,7 @@ export default function FormSelectStyle() {
         "left": faAlignLeft,
         "center": faAlignCenter,
         "right": faAlignRight,
-        "justify": faAlignJustify,
+        "space-between": faAlignJustify,
     }
 
     const mapType = {
@@ -47,7 +48,7 @@ export default function FormSelectStyle() {
     }
 
     return (
-        <div>
+        <MainSelecStyle>
             {Object.entries(mapStyle).map(([key, value]) => (
                 <button
                 key={key}
@@ -80,6 +81,6 @@ export default function FormSelectStyle() {
                     <option key={key} value={key}>{value}</option>
                 ))}
             </select>
-        </div>
+        </MainSelecStyle>
     )
 }

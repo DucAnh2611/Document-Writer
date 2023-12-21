@@ -82,14 +82,14 @@ export const GlobalStyles = createGlobalStyle`
         border: ${({ theme }) => theme.colors.paper.border.weight} solid ${({ theme }) => theme.colors.paper.border.color};
     }
 
-    textarea, input {
+    textarea, input, select {
         resize: none;
         background: ${({ theme }) => theme.colors.body};
         color: ${({ theme }) => theme.colors.text};
         font-family: ${({ theme }) => theme.font};
         padding: 10px;
         box-sizing: border-box;
-        font-size: 13px;
+        font-size: 15px;
         outline: none;
         border-radius: 10px;
         width: 100%;
@@ -119,5 +119,41 @@ export const GlobalStyles = createGlobalStyle`
     }
     span.loading_svg{
         animation: loading 1.5s linear infinite;
+    } 
+
+    @keyframes capret {
+        0% {
+            opacity: 0;
+        }  
+        50% {
+            opacity: 1;
+        }
+        100% {
+            opacity: 0;
+        }
+    }
+
+    span.bold {
+        background-color: ${({ theme }) => theme.colors.text};
+        opacity: .1;
+
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+    }
+
+    span.capret {
+        height: 100%;
+        width: 2px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        
+        box-shadow: 0 0 5px ${({ theme }) => theme.colors.text};
+        background-color: ${({ theme }) => theme.colors.text};
+
+        animation: capret 1s linear infinite;
     } 
 `;

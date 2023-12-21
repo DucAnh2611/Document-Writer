@@ -61,12 +61,7 @@ export default function EditDocs() {
                 SetChange(false);
                 SetDoc(res.data);
                 SetNewDoc(res.data);
-                SetListDoc(listDoc => listDoc.map(e => {
-                    if(e._id === doc._id) {
-                        return res.data;
-                    }
-                    return e;
-                }));
+                SetListDoc(listDoc => [res.data, ...listDoc.filter(e => e._id !== id)]);
             };
         })
     }

@@ -46,7 +46,7 @@ const get = async (userid, key = "", page = 1, limit = config.db_option.limit) =
                 modify_at: 1,
                 _id: 1,
                 sort: {
-                    modify_at: -1
+                    modify_at: 1
                 }
             }
         )

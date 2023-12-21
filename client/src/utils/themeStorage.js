@@ -63,7 +63,7 @@ export const theme = {
                     }
                 }
             },
-            font: "Poppins"
+            font: "Be Vietnam Pro"
         },
         light: {
             id: "T_002",
@@ -115,7 +115,7 @@ export const theme = {
                     }
                 }
             },
-            font: "Poppins"
+            font: "Be Vietnam Pro"
         }    
     }
 }
