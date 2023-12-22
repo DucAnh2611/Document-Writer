@@ -4,15 +4,12 @@ import { useNavigate } from "react-router-dom";
 import { config_api } from "./ApiConfig";
 
 export default function CallBack() {
-    const called = useRef(false);
     const { checkLoginState, login } = useContext(AuthContext);
     const navigate = useNavigate();
 
     const getToken = async () => {
         if(!login) {
             try {
-                if(called.current) return;
-                called.current = true;
 
                 const res = await fetch(`${config_api.base_uri_local}/${config_api.auth.google}/token${window.location.search}`, {
                     credentials: "include"

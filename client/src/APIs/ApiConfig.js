@@ -1,5 +1,5 @@
 export const config_api = {
-    base_uri_local : "https://be-document-writer.adaptable.app",
+    base_uri_local : "http://localhost:3001",
     base_uri_clould: "http://",
     user : "users",
     document: "document",
