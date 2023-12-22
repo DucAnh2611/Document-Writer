@@ -8,7 +8,6 @@ export default function FormStyleProvider({children}) {
     const [paragraphStyle, SetParagraphstyle] = useState({
         type: "normal",
         fontSize: "13",
-        fontStyle: "normal",
         textAlign: "left"
     });
 

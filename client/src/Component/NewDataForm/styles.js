@@ -10,6 +10,7 @@ export const MainFormAdd = styled.div`
     border-radius: 10px;
     padding: 20px;
     box-sizing: border-box;
+    margin-top: 15px;
 `;
 
 export const ButtonCreate = styled.button`

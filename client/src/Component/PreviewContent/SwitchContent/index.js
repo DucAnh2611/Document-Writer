@@ -1,8 +1,9 @@
+import React from "react";
 import styled from "styled-components";
 
 const BaseContent = styled.p`
     margin: 0;
-    min-width: 5px;
+    width: fit-content;
 `;
 
 export const SwitchContent = ({styleData, content, ...props}) => {
@@ -10,6 +11,7 @@ export const SwitchContent = ({styleData, content, ...props}) => {
     const checkStyle = () => {
         let baseString = styleData.join(" ");
         let style = {};
+
         if(baseString.includes("bold")) {
             style = {
                 ...style,
@@ -31,5 +33,10 @@ export const SwitchContent = ({styleData, content, ...props}) => {
 
         return style;
     }
-    return <BaseContent style={checkStyle()} {...props}>{content}</BaseContent>
+   return <BaseContent style={checkStyle()} {...props}>{
+    content !== " " ? content
+    :<React.Fragment>
+        &#8232;
+    </React.Fragment> 
+    }</BaseContent>
 }

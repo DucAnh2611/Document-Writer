@@ -9,14 +9,21 @@ export default function NewDataForm({open, onOpen, onAdd, ...props}) {
     const {currentTextStyle, paragraphStyle} = useStyleForm();
 
     const [newdata, SetNewData] = useState([]);
-    const [prevKey, SetPrevKey] = useState("");
     const [capretStart, SetCapretStart] = useState(1);
     const [capretEnd, SetCapretEnd] = useState(1);
     const textRef = useRef(null);
 
+    const handleChangeSelect = (style) => {
+        
+        SetNewData(data => data.map( e => ({
+            ...e,
+            style: style
+        }) ));   
+    }
+
     const handleChangeContent = (e) => {
         if(e.key.length === 1) {
-            if(prevKey === "") {
+            if(!e.ctrlKey) {
                 let capret = capretStart + 1;
 
                 SetCapretEnd(capret);
@@ -25,25 +32,19 @@ export default function NewDataForm({open, onOpen, onAdd, ...props}) {
                 SetNewData(data => [
                     ...data.slice(0, capret-1),
                     {
-                        key: e.key,
+                        key: e.shiftKey ? e.key.toUpperCase() : e.key,
                         style: currentTextStyle
                     },
                     ...data.slice(capret-1)
                 ]);   
             }
-            else {
-                prevKey !== "" && SetPrevKey("");
-            }        
-        }
-        else if(e.key === "Control") {
-            SetPrevKey("control");
         }
         else if(e.key === "Enter") {
-            // handleAdd();
+            handleAdd();
         }
         else if(e.key === "Backspace"){
             let end = capretEnd, start = capretStart;
-            if(end === start) {
+            if(end === start && start !== 0) {
                 start--;
             }
 
@@ -63,19 +64,28 @@ export default function NewDataForm({open, onOpen, onAdd, ...props}) {
         SetCapretStart(e.target.selectionStart);
     }
 
+    const resetData = () => {
+
+        SetCapretEnd(1);
+        SetCapretStart(1);
+        SetNewData([]);
+    }
+
     const handleAdd = () => {
         onAdd({
             content: newdata,
             style: paragraphStyle
         });
-        SetCapretEnd(1);
-        SetCapretStart(1);
-        SetPrevKey("");
-        SetNewData([]);
+        resetData();
+    }
+
+    const handleClose = () => {
+        onOpen();
+        resetData();
     }
 
     return (
-        <MainFormAdd>
+        <MainFormAdd {...props}>
         {
             open 
             ?<FormAdd>
@@ -83,7 +93,7 @@ export default function NewDataForm({open, onOpen, onAdd, ...props}) {
                 <ContentWrapper>
                     <p>Style</p>
 
-                    <FormSelectStyle/>
+                    <FormSelectStyle onSelectType={handleChangeSelect}/>
                     
                     <p>Content</p>
 
@@ -99,15 +109,13 @@ export default function NewDataForm({open, onOpen, onAdd, ...props}) {
                     <PreviewContent content={newdata} capretStart={capretStart} capretEnd={capretEnd}/>                
                 </ContentWrapper>
 
-                <ButtonForm onClick={onOpen}>Close</ButtonForm>
+                <ButtonForm onClick={handleClose}>Close</ButtonForm>
                 <ButtonForm onClick={handleAdd}>Add</ButtonForm>
 
             </FormAdd>
-            :<ButtonCreate onClick={onOpen}>Add Content</ButtonCreate>
+            :<ButtonCreate onClick={handleClose}>Add Content</ButtonCreate>
         }                
         </MainFormAdd>            
-
     )
-
 
 }

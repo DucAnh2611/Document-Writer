@@ -1,19 +1,17 @@
 import { useContext } from "react"
 import { FormStyleContext } from "../../utils/FormStyleProvider"
-import { EachCharacter, PreviewWrapper } from "./styled";
+import { EachCharacter } from "./styled";
 import { SwitchContent } from "./SwitchContent";
+import SwitchParagraph from "./SwitchParagraph";
 
 export default function PreviewContent({content, capretStart, capretEnd, ...props}) {
 
-    const { currentTextStyle, paragraphStyle } = useContext(FormStyleContext);
-
-    const ConvertType = () => {
-    }
-
+    const { paragraphStyle } = useContext(FormStyleContext);
     return (
-        <PreviewWrapper style={{
-            justifyContent: paragraphStyle.textAlign
-        }}>
+        <SwitchParagraph style={{
+            justifyContent: paragraphStyle.textAlign,
+            fontSize: `${paragraphStyle.fontSize}px`
+        }} type={paragraphStyle.type}>
             {content && content.map((e, id) => (
                 <EachCharacter>
                     <SwitchContent key={id} styleData={e.style} content={e.key}/>        
@@ -24,6 +22,6 @@ export default function PreviewContent({content, capretStart, capretEnd, ...prop
                 </EachCharacter>
 
             ))}
-        </PreviewWrapper>
+        </SwitchParagraph>
     )
 }
