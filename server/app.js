@@ -21,7 +21,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use((req, res, next) => {
-  const allowedOrigins = ['http://127.0.0.1:3000', 'http://localhost:3000', 'https://document-writer-sable.vercel.app'];
+  const allowedOrigins = ['http://127.0.0.1:3000', 'http://localhost:3000', 'https://document-writer-sable.vercel.app', "https://document-writer-boujymw2s-ducanhs-projects.vercel.app"];
   const origin = req.headers.origin;
   if (allowedOrigins.includes(origin)) {
        res.setHeader('Access-Control-Allow-Origin', origin);
