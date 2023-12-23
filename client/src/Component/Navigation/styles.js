@@ -79,4 +79,5 @@ export const NavigationTheme = styled.div`
     display: flex;
     align-items: center;
     justify-content: left;
+    gap: 10px;
 `;

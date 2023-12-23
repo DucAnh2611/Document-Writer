@@ -8,29 +8,46 @@ import { ThemeContext } from "../ThemeContextProvider";
 import ThemeSelector from "../../utils/themeSelector";
 import { NavigationDocs, NavigationHeader, NavigationTheme } from "./styles";
 import useListDoc from "../../Hooks/useListDoc";
+import { useNotifications } from "../../Hooks/useNotification";
+import PaginationListDoc from "../Pagination";
+import ButtonWithText from "../Button/ButtonWithText";
+
+const BASE_GET_LIMIT = 10;
 
 export default function Navigation() {
 
     const { SetSelectedTheme } = useContext(ThemeContext);
-    const { user } = useAuth();
+    const { addNoti } = useNotifications();
+    const { user, logout } = useAuth();
     const {listDoc, SetListDoc} = useListDoc();
     const [page, SetPage] = useState(1);
     const [key, SetKey] = useState("");
     const [load, SetLoad] = useState(false);
     const [isCreating, SetIsCreating] = useState(false);
+    const [maxPage, SetMaxPage] = useState(0);
 
     const getUserList = async () => {
+        
+        SetLoad(false);
         const res = await fetch(`${config_api.base_uri_local}/${config_api.document}/list?key=${key}&page=${page}`, {
             credentials: "include"
         });
 
         const dataRes = await res.json();
         if(dataRes.status === "ok") {
-            SetListDoc(list => [...list, ...dataRes.data.list]);
+            SetListDoc(dataRes.data.list || []);
+        //     SetListDoc(list => [...list, ...dataRes.data.list]);
+            SetMaxPage(dataRes.data.max);
+            SetLoad(true);
+            addNoti('a', "Current page is: " + page.toString() + " ");
+        }
+        else {
+            addNoti('e', "Error: " + dataRes.message);
         }
     }
 
     const createDoc = async () => {
+        addNoti('w', 'Creating new doc: New Document');
         SetIsCreating(true);
         await fetch(`${config_api.base_uri_local}/${config_api.document}/create`, {
             method: "POST",
@@ -54,20 +71,24 @@ export default function Navigation() {
                     },
                     ...list
                 ]);
+                SetMaxPage(Math.ceil((listDoc.length+1)/BASE_GET_LIMIT))
+                addNoti('a', 'Created new doc: New Document');
+            }
+            else {
+                addNoti('e', "Error: " + data.message);
             }
         });
     }
 
-    useEffect(() => {
-        if(!load) {
-            SetLoad(true);
+    const handleClickPage = (page) => {
+        SetPage(page);
+    }
 
-            getUserList();
-        }
-    }, []);
+    useEffect(() => {
+        getUserList();
+    }, [page]);
 
     if(!user) return null;
-    if(!load) return <p>Loading</p>;
 
     return (
         <nav>
@@ -87,15 +108,17 @@ export default function Navigation() {
             </NavigationHeader>
 
             <NavigationDocs>
-                {(listDoc && listDoc.length !==0)
+                {(load)
                 ? listDoc.map(e => (
                     <DocCard doc={e} key={e._id} SetList={SetListDoc}/>
                 )) 
-                : <p>Create new doc to have this list</p>}    
+                : <p>loading</p>}    
             </NavigationDocs>
 
             <NavigationTheme>
+                <ButtonWithText onClick={logout} icon={solid.faDoorOpen} text={"Logout"}/>
                 <ThemeSelector setter={SetSelectedTheme}/>
+                <PaginationListDoc current={page} max={maxPage} onClick={handleClickPage}/>
             </NavigationTheme>
         </nav>
     )

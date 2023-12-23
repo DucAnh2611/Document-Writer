@@ -7,7 +7,7 @@ export const RouteWithNavigation = () => {
         <main style={{display: "flex", height: "100%"}}>
             <ListDocProvider>
                 <Navigation/>
-                <Outlet/>                
+                <Outlet/>                      
             </ListDocProvider>
         </main>
     )

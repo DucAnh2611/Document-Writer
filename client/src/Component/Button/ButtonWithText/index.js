@@ -11,6 +11,7 @@ const ButtonMain = styled.button`
     background-color: none;
     width: 100px;
     padding: 10px;
+    white-space: normal;
 
     &>svg {
         height: 15px;

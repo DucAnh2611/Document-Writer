@@ -6,7 +6,6 @@ export default function ListDocProvider({children}) {
 
     const [listDoc, SetListDoc] = useState([]);
 
-
     return (
         <ListDocContext.Provider value={{listDoc, SetListDoc}}>
             {children}

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "../Component/AuthContextProvider";
 import { useNavigate } from "react-router-dom";
 import { config_api } from "./ApiConfig";
@@ -10,11 +10,9 @@ export default function CallBack() {
     const getToken = async () => {
         if(!login) {
             try {
-
-                const res = await fetch(`${config_api.base_uri_local}/${config_api.auth.google}/token${window.location.search}`, {
+                await fetch(`${config_api.base_uri_local}/${config_api.auth.google}/token${window.location.search}`, {
                     credentials: "include"
                 });
-                const data = await res.json();
 
                 checkLoginState();
                 // navigate("/docs");                    

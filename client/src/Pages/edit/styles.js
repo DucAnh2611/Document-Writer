@@ -46,6 +46,7 @@ export const DocSave = styled.div`
     display: flex;
     align-items: center;
     width: fit-content;
+    gap: 10px;
 
     &>button{
         padding: 10px 20px;
@@ -65,4 +66,5 @@ export const EditMain = styled.section`
     gap: 30px;
     overflow-y: auto;
     flex-grow: 1;
+    position: relative;
 `

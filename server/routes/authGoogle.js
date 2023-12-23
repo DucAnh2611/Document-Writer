@@ -103,7 +103,10 @@ router.get('/logged_in', async (req, res) => {
 
 router.post("/logout", (_, res) => {
   // clear cookie
-  res.clearCookie(process.env.COOKIES_NAME).json({ message: 'Logged out' });
+  res.clearCookie(process.env.COOKIES_NAME, {
+    sameSite: "none",
+    secure: true,
+  }).json({ message: 'Logged out' });
 })
 
 module.exports = router;

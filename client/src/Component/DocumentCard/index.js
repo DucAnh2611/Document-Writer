@@ -3,11 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { CardHolder } from "./styles";
 import DocCardDetail from "../DocumentCardDetail";
 import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import ButtonsDocCard from "../DocCardButtons";
 import { config_api } from "../../APIs/ApiConfig";
+import { useNotifications } from "../../Hooks/useNotification";
 
 export default function DocCard({doc, SetList, ...props}) {
+
+    const { addNoti } = useNotifications();
     const [isSelect, SetIsSelect] = useState(false);
     const navigate = useNavigate();
     const [wait, SetWait] = useState(false);
@@ -17,6 +20,7 @@ export default function DocCard({doc, SetList, ...props}) {
     }
 
     const handleDelete = async () => {
+        addNoti('w', "Deleting doc: " + doc.title);
         SetWait(true);
         SetIsSelect(false);
         await fetch(`${config_api.base_uri_local}/${config_api.document}/${doc._id}`, {
@@ -27,6 +31,10 @@ export default function DocCard({doc, SetList, ...props}) {
             SetWait(false);
             if(data.status === "ok") {
                 SetList(list => list.filter(e => e._id !== doc._id));
+                addNoti('a', "Deleted doc: " + doc.title);
+            }
+            else {  
+                addNoti('e', data.message);
             }
 
         })

@@ -39,6 +39,10 @@ export const GlobalStyles = createGlobalStyle`
         border: none;
     }
 
+    button.current {
+        background-color: ${({ theme }) => theme.colors.button.hover.background};
+    }
+
     button:not(:disabled):hover {
         background-color: ${({ theme }) => theme.colors.button.hover.background};
         color: ${({ theme }) => theme.colors.button.hover.text};
@@ -79,7 +83,37 @@ export const GlobalStyles = createGlobalStyle`
     div.paper {
         background-color: ${({ theme }) => theme.colors.paper.background};
         color: ${({ theme }) => theme.colors.paper.text};
-        border: ${({ theme }) => theme.colors.paper.border.weight} solid ${({ theme }) => theme.colors.paper.border.color};
+    }
+
+    div.notification_container {
+        height: fit-content;
+        width: fit-content;
+        position: fixed;
+        top: 20px;
+        left: 50%;
+        transform: translateX(-50%);
+        background-color: transparent;
+        z-index: 1;
+    }
+
+    @keyframes fromtop {
+        0% {
+            transform: translateY(-100%);
+        }
+        100% {
+            transform: translateY(0);
+        }
+    }
+
+    
+    div.notification {
+        animation-name: fromtop;
+        animation-timing-function: linear;
+        animation-fill-mode: forwards;
+        background-color: ${({ theme }) => theme.colors.button.background};
+        &>p {
+            color: ${({ theme }) => theme.colors.text};
+        }
     }
 
     textarea, input, select {
@@ -103,6 +137,10 @@ export const GlobalStyles = createGlobalStyle`
         width: 200px;
         font-family: ${({ theme }) => theme.font};
         border: ${({ theme }) => theme.colors.paper.border.weight} solid ${({ theme }) => theme.colors.paper.border.color};
+    }
+
+    input:focus {
+        background: ${({ theme }) => theme.colors.button.hover.background};
     }
 
     textarea:focus {
@@ -146,14 +184,56 @@ export const GlobalStyles = createGlobalStyle`
 
     span.capret {
         height: 100%;
-        width: 2px;
+        width: 10px;
         position: absolute;
         top: 0;
-        left: 0;
+        right: -10px;
         
-        box-shadow: 0 0 5px ${({ theme }) => theme.colors.text};
+        box-shadow: 0 0 10px ${({ theme }) => theme.colors.text};
         background-color: ${({ theme }) => theme.colors.text};
 
         animation: capret 1s linear infinite;
-    } 
+    }
+
+    .quill {
+        display:flex;
+        flex-direction: column;
+        position: relative;
+        height: fit-content;
+        overflow-y: auto;
+    }
+    .ql-toolbar {
+        position: sticky;
+        top: 0;
+        height: 50px;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        background-color: ${({ theme }) => theme.colors.body};
+        z-index: 1;
+    }
+    .ql-container{
+        flex-grow: 1;
+        overflow: hidden;
+        box-sizing: border-box;
+        font-size: 14px;
+    }
+    .ql-formats > *{
+        color: ${({ theme }) => theme.colors.text};
+    }
+    .ql-editor{
+        font-family: ${({ theme }) => theme.font};
+    }
+
+    .ql-editor .ql-size-small {
+        font-size: 10px;
+    }
+
+    .ql-editor .ql-size-large {
+        font-size: 20px;
+    }
+
+    .ql-editor .ql-size-huge {
+        font-size: 22px;
+    }
 `;
