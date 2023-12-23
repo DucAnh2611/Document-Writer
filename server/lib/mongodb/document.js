@@ -13,7 +13,7 @@ const create = async (userid) => {
             create_at: new Date().toUTCString(),
             modify_at: new Date().toUTCString(),
             title: "New Document",
-            data: []
+            data: ""
         }
         let docId = await dbo.collection(config.collection.document).insertOne(newDoc);
         
@@ -54,8 +54,13 @@ const get = async (userid, key = "", page = 1, limit = config.db_option.limit) =
         .skip((page - 1) * limit)
         .toArray();
 
+        let countDocument = await dbo.collection(config.collection.document).countDocuments({
+            title: new RegExp(key),
+            owner: userid
+        });
+
         // await client.close();
-        return createResData(status.OK, {list: all});
+        return createResData(status.OK, {list: all, max: Math.ceil(countDocument/limit)});
     } 
     catch(err) {
         console.error(err);
@@ -70,14 +75,13 @@ const info = async (userid, docid) => {
         let dbo = client.db().collection(config.collection.document);
         
         let document = await dbo.find({
-            _id: new ObjectId(docid),
-            owner: userid
+            _id: new ObjectId(docid)
         }).toArray();
 
         // await client.close();
 
-        if(document.length !==0 ) {
-            return createResData(status.OK, {info: document[0]});
+        if(document.length !==0 && (document[0].publish || document[0].owner === userid)) {
+            return createResData(status.OK, {info: {...document[0], editable: document[0].owner === userid}});
         }
         else {
             return createResData(status.NOT_FOUND);
@@ -102,7 +106,6 @@ const update = async (userid, data) => {
         ).toArray();
 
         if(doc.length === 0) {
-            await client.close();
             return createResData(status.NOT_FOUND);
         }
         else {
