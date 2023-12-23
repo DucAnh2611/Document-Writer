@@ -71,7 +71,7 @@ router.get('/token', async function(req, res) {
 
         const token = newToken({ user: keyToken }, "72h");
 
-        res.cookie(process.env.COOKIES_NAME, token, { maxAge: config.tokenExpiration, httpOnly: false, sameSite: "none"});
+        res.cookie(process.env.COOKIES_NAME, token, { maxAge: config.tokenExpiration, httpOnly: false, secure: true, sameSite: "none"});
 
         res.json({ status: "ok", data: {loggedIn: true, user}});
         break;
@@ -93,7 +93,7 @@ router.get('/logged_in', async (req, res) => {
     const { user } = jwt.verify(token, config.TOKEN_KEY);
     const newTokneGen = newToken({ user }, "72h");
     // Reset token in cookie
-    res.cookie(process.env.COOKIES_NAME, newTokneGen, { maxAge: config.tokenExpiration, httpOnly: false, sameSite: "none"});
+    res.cookie(process.env.COOKIES_NAME, newTokneGen, { maxAge: config.tokenExpiration, httpOnly: false, secure: true, sameSite: "none"});
     res.json({ loggedIn: true, user });
   } catch (err) {
     console.log(err);
